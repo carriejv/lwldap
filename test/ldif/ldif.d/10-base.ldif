@@ -1,0 +1,26 @@
+# example.com
+dn: dc=example,dc=com
+dc: example
+o: example
+objectClass: dcObject
+objectClass: organization
+
+# root
+dn: cn=root,dc=example,dc=com
+cn: root
+description: ldap root user
+objectClass: organizationalRole
+objectClass: top
+roleOccupant: dc=example,dc=com
+
+# users
+dn: ou=user,dc=example,dc=com
+ou: user
+objectClass: top
+objectClass: organizationalUnit
+
+# groups
+dn: ou=group,dc=example,dc=com
+ou: group
+objectClass: top
+objectClass: organizationalUnit

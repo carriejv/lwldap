@@ -20,30 +20,31 @@ Configuration of slapd should be managed via a `config.ldif` file as described b
 
 #### Build-time
 
-| Environment Variable | Allowed Values          | Description                                                                                   |
-|----------------------|-------------------------|-----------------------------------------------------------------------------------------------|
-| LWLDAP_UID           | number                  | Overrides the default Debian uid of the openldap user (100)                                   |
-| LWLDAP_GID           | number                  | Overrides the default Debian gid of the openldap user (101)                                   |
+| Environment Variable  | Allowed Values           | Description                                                                                   |
+|-----------------------|--------------------------|-----------------------------------------------------------------------------------------------|
+| LWLDAP_UID            | number                   | Overrides the default Alpine uid of the openldap user (100)                                   |
+| LWLDAP_GID            | number                   | Overrides the default Alpine gid of the openldap user (101)                                   |
 
 #### Runtime
 
-| Environment Variable | Allowed Values          | Description                                                                                   |
-|----------------------|-------------------------|-----------------------------------------------------------------------------------------------|
-| LWLDAP_BIND_DN       | string                  | The DN of a read-write account to use for seeding.                                            |
-| LWLDAP_BIND_PW       | string                  | The password of a read-write account to use for seeding.                                      |
-| LWLDAP_SKIP_CONFIG   | any                     | If set, skips [configuring slapd](#configuring-slapd) on startup.                             |
-| LWLDAP_SKIP_SEED     | any                     | If set, skips [seeding the directory](#seeding-the-directory) on startup.                     |
-| LWLDAP_SEED_METHOD   | "auto"\|"add"\|"modify" | Sets the [seeding method](#seeding-the-directory) for the seed ldif files.                    |
-| LWLDAP_DEBUG_STARTUP | any                     | If set, sets -x on the startup script.                                                        |
+| Environment Variable   | Allowed Values          | Description                                                                                   |
+|------------------------|-------------------------|-----------------------------------------------------------------------------------------------|
+| LWLDAP_BIND_DN         | string                  | The DN of a read-write account to use for seeding.                                            |
+| LWLDAP_BIND_PW         | string                  | The password of a read-write account to use for seeding.                                      |
+| LWLDAP_SKIP_CONFIG     | any                     | If set, skips [configuring slapd](#configuring-slapd) on startup.                             |
+| LWLDAP_SKIP_SEED       | any                     | If set, skips [seeding the directory](#seeding-the-directory) on startup.                     |
+| LWLDAP_SEED_METHOD     | "auto"\|"add"\|"modify" | Sets the [seeding method](#seeding-the-directory) for the seed ldif files.                    |
+| LWLDAP_SLAPD_LOG_LEVEL | number                  | Sets the slapd log level.                                                                     |
+| LWLDAP_DEBUG_STARTUP   | any                     | If set, sets -x on the startup script.                                                        |
 
 ### Configuring slapd
 
 To configure slapd, mount a `config.ldif` file to `/ldif/config.ldif`. This will be used to initialize the config db with `slapadd`.
 
-This initial configuration will be automatically skipped in several cases:
- * `/etc/openldap/slapd.d` already contains files
+This initial configuration will be automatically skipped if:
  * `/ldif/config.ldif` is missing
  * `LWLDAP_SKIP_CONFIG` is set
+ * Config initialization has already completed once
 
 Skipping initial configuration can be useful when mounted a preconfigured database.
 
@@ -59,7 +60,7 @@ Note that while `ldapadd` will not create duplicate entries, `ldapmodify` *will*
 
 ### LDIF Variable Substition
 
-The startup script will substitue arbitrary environment `$variables` in both `config.ldif` and `ldif.d` files. `$$` can be used to escape a literal `$`. If an appropriate environment variable is not set, the substitution will be silently skipped.
+The startup script will substitue arbitrary environment `$variables` using `envsubst` in both `config.ldif` and `ldif.d` files. `$ESCAPE_DOLLAR` can be used to escape a literal `$`. If an appropriate environment variable is not set, the substitution will be silently skipped.
 
 For example, to configure an admin password:
 

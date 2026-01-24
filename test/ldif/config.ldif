@@ -1,0 +1,46 @@
+# Root
+dn: cn=config
+objectClass: olcGlobal
+cn: config
+olcArgsFile: /run/openldap/slapd.args
+olcPidFile: /run/openldap/slapd.pid
+
+# Schemas
+dn: cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: schema
+
+# Config DB
+dn: olcDatabase=config,cn=config
+objectClass: olcDatabaseConfig
+olcDatabase: config
+olcRootDN: cn=root,dc=example,dc=com
+
+# Schemas
+#   core
+include: file:///etc/openldap/schema/core.ldif
+#   cosine
+include: file:///etc/openldap/schema/cosine.ldif
+#   posixAccount, posixGroup
+include: file:///etc/openldap/schema/nis.ldif
+#   inetorgperson
+include: file:///etc/openldap/schema/inetorgperson.ldif
+
+# Modules
+dn: cn=module{0},cn=config
+objectClass: olcModuleList
+olcModulePath: /usr/lib/openldap
+olcModuleLoad: back_mdb.so
+
+# Directory DB
+dn: olcDatabase=mdb,cn=config
+objectClass: olcDatabaseConfig
+objectClass: olcMdbConfig
+olcDatabase: mdb
+olcSuffix: dc=example,dc=com
+olcRootDN: cn=root,dc=example,dc=com
+olcRootPW: $ROOT_PASSWORD
+olcDbDirectory: /etc/openldap/mdb
+olcDbIndex: objectClass,dc eq
+olcDbIndex: uid pres,eq
+olcDbIndex: cn,mail,sn pres,sub,eq

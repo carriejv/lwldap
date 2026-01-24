@@ -1,26 +1,34 @@
-ARG BASEIMG=debian
-ARG BASEIMG_TAG=13.2-slim
+ARG BASEIMG=alpine
+ARG BASEIMG_TAG=3.23
 
 FROM ${BASEIMG}:${BASEIMG_TAG}
 
-# Add backports repo for security patches
-RUN echo "deb http://ftp.debian.org/debian trixie-backports main" >> /etc/apt/sources.list
+# Explicitly create an ldap user
+RUN addgroup -g "${LWLDAP_GID:-101}" ldap && \
+    adduser -DHG ldap -u "${LWLDAP_UID:-100}" -s /usr/sbin/nologin -g "OpenLDAP User" ldap
 
-# Explicitly create an ldap user 
-RUN groupadd -rg "${LWLDAP_GID:-101}" openldap && \
-    useradd -rg openldap -u "${LWLDAP_UID:-100}" -s /bin/false -d /usr/sbin/nologin -c "OpenLDAP Server Account" openldap
+# Create lwldap flags dir
+RUN mkdir -pm 777 /lwldap
 
 # Install openldap
-ARG OPENLDAP_VERSION=2.6.10\*
-RUN LC_ALL=C DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y --no-install-recommends \
-    ldap-utils=${OPENLDAP_VERSION} \
-    slapd=${OPENLDAP_VERSION}
+ARG OPENLDAP_VERSION=2.6.10-r0
+RUN apk update && \
+    apk add envsubst \
+    openldap=${OPENLDAP_VERSION} \
+    openldap-back-mdb=${OPENLDAP_VERSION} \
+    openldap-clients=${OPENLDAP_VERSION}
+RUN chown -R ldap:ldap /etc/openldap
 
-# Make seed ldif directories to ensure they exist
-RUN mkdir -p /ldif/ldif.d
+# Make default directories
+RUN install -m 755 -o ldap -g ldap -d /etc/openldap/slapd.d && \
+    install -m 755 -o ldap -g ldap -d /etc/openldap/mdb && \
+    install -m 755 -o ldap -g ldap -d /run/openldap
 
 # Expose ldap ports
 EXPOSE 389 636
 
-ENTRYPOINT /bin/bash
+# Copy startup script
+COPY ./scripts/lwldap.sh /scripts/lwldap.sh
+
+USER ldap:ldap
+ENTRYPOINT ["/scripts/lwldap.sh"]
