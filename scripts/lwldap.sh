@@ -19,6 +19,10 @@ function should_config() {
         echo "Skipping config setup because $LDIF_DIR/config.ldif does not exist."
         return
     fi
+    if [ ! -d "$SLAPD_CFG_DIR/slapd.d" ] && [ -z "$(ls -A "$SLAPD_CFG_DIR/slapd.d" 2>/dev/null)" ]; then
+        echo "Skipping config setup because $SLAPD_CFG_DIR/slapd.d already exists and contains config."
+        return
+    fi
     if [ -f "$LWLDAP_DIR/.lwldap_config_done" ]; then
         echo "Skipping config setup because it has already completed once."
         return

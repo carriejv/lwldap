@@ -44,9 +44,10 @@ To configure slapd, mount a `config.ldif` file to `/ldif/config.ldif`. This will
 This initial configuration will be automatically skipped if:
  * `/ldif/config.ldif` is missing
  * `LWLDAP_SKIP_CONFIG` is set
+ * `/etc/openldap/slapd.d` already exists and contains config
  * Config initialization has already completed once
 
-Skipping initial configuration can be useful when mounted a preconfigured database.
+Skipping initial configuration can be useful when mounting a preconfigured database.
 
 ### Seeding the directory
 
