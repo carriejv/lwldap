@@ -51,7 +51,7 @@ Skipping initial configuration can be useful when mounting a preconfigured datab
 
 ### Seeding the directory
 
-To seed the directory, mount additional ldif files to `/ldif/ldif.d` inside the container. These will processed in order.
+To seed the directory, mount additional ldif files to `/ldif/ldif.d` inside the container. These will processed in order. Seeding is best effort. The container will remain up even if seeding steps fail, so perform your own health checks afterwards if needed.
 
 Unlike many openldap images, **lwldap** does not create its own credentials for your database and is not aware of your admin credentials by default. In order to seed, you must provide read-write credentials via `LWLDAP_BIND_DN` and `LWLDAP_BIND_PW`.
 

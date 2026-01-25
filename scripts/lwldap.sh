@@ -19,7 +19,7 @@ function should_config() {
         echo "Skipping config setup because $LDIF_DIR/config.ldif does not exist."
         return
     fi
-    if [ ! -d "$SLAPD_CFG_DIR/slapd.d" ] && [ -z "$(ls -A "$SLAPD_CFG_DIR/slapd.d" 2>/dev/null)" ]; then
+    if [ -d "$SLAPD_CFG_DIR/slapd.d" ] && [ ! -z "$(ls -A "$SLAPD_CFG_DIR/slapd.d" 2>/dev/null)" ]; then
         echo "Skipping config setup because $SLAPD_CFG_DIR/slapd.d already exists and contains config."
         return
     fi
@@ -67,7 +67,7 @@ function ldap_add() {
     ldapadd -H "ldap://localhost" \
         -D "$LWLDAP_BIND_DN" \
         -w "$LWLDAP_BIND_PW" \
-        -f "$file"
+        -f "$file" || true
 }
 
 function ldap_modify() {
@@ -75,7 +75,7 @@ function ldap_modify() {
     ldapmodify -H "ldap://localhost" \
         -D "$LWLDAP_BIND_DN" \
         -w "$LWLDAP_BIND_PW" \
-        -f "$file"
+        -f "$file" || true
 }
 
 function db_seed() {
