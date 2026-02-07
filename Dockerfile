@@ -4,6 +4,10 @@ ARG BASEIMG_TAG=3.23
 FROM ${BASEIMG}:${BASEIMG_TAG}
 
 # Explicitly create an ldap user
+ARG LWLDAP_UID=100
+ARG LWLDAP_GID=101
+ENV LWLDAP_UID=$LWLDAP_UID
+ENV LWLDAP_GID=$LWLDAP_GID
 RUN addgroup -g "${LWLDAP_GID:-101}" ldap && \
     adduser -DHG ldap -u "${LWLDAP_UID:-100}" -s /usr/sbin/nologin -g "OpenLDAP User" ldap
 

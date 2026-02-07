@@ -4,6 +4,12 @@ The lightest-weight openldap image you ever did see.
 
 No automatic schema loading or configuration, no certificate generation, no auto-configured replication -- just a container with slapd running in it and a minimal startup script to facilitate initial setup.
 
+## Prebuilt Images
+
+**lwldap** is available on [Dockerhub](https://hub.docker.com/repository/docker/carriejv/lwldap/general).
+
+Main release tags use the Alpine/Debian UID and GID of 100/101. Pre-built RHEL-compatible images are available (using UID/GID 55) with the tag `vX.Y.Z-55`.
+
 ## Why?
 
 As someone that's familiar with LDAP administration, I got frustrated at how opinionated most of the existing images and wanted something simple that I could use to easily test configurations and work with preexisting nonstandard schemas.
@@ -14,13 +20,13 @@ This is literally just a container that runs slapd. It will only be as productio
 
 ### Configuring lwldap
 
-A small number of environment variables are provided to configure the build and startup behavior of **lwldap**.
+A small number of build args and environment variables are provided to configure the build and startup behavior of **lwldap**.
 
 Configuration of slapd should be managed via a `config.ldif` file as described below.
 
 #### Build-time
 
-| Environment Variable  | Allowed Values           | Description                                                                                   |
+| Build Arg             | Allowed Values           | Description                                                                                   |
 |-----------------------|--------------------------|-----------------------------------------------------------------------------------------------|
 | LWLDAP_UID            | number                   | Overrides the default Alpine uid of the openldap user (100)                                   |
 | LWLDAP_GID            | number                   | Overrides the default Alpine gid of the openldap user (101)                                   |
